@@ -4,3 +4,4 @@ numpy
 jupyterlab_myst
 jupyterlab
 plotly
+mystmd
