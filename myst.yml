@@ -12,14 +12,17 @@ project:
   exports:
     - format: pdf
       template: plain_latex_book
-      output: out/book.pdf
+      output: _build/book.pdf
   toc:
     - file: intro.md
+    - file: notebooks/00-intro/what-to-expect.md
     - file: notebooks/00-intro/0000-00-02-prereq-hw.md
     - file: notebooks/01-py-intro/Python_1.ipynb
-    - file: notebooks/01-py-intro/Python_2.ipynb
-#    - file: notebooks/02-linear-models/LinearModels.ipynb
-#    - file: notebooks/02-linear-models/Perceptron3.ipynb
+      children:
+        - file: notebooks/01-py-intro/Python_2.ipynb
+    - file: notebooks/02-linear-models/LinearModels.ipynb
+    - file: notebooks/02-linear-models/Perceptron3.ipynb
+
 #    - file: notebooks/02-linear-models/ContinuousOptimization.ipynb
 #    - file: notebooks/021-decision-theory/2008-bertsekas-prob-Ch9-P20.md
 #    - file: notebooks/03-autograd/Autograd.ipynb
