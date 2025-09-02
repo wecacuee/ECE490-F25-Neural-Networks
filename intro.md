@@ -7,6 +7,3 @@ networks work and how they work from deep inside.
 
 Vikas Dhiman, 279 Barrows Hall, <vikas.dhiman@maine.edu>
 
-
-```{tableofcontents}
-```

@@ -15,13 +15,18 @@ project:
       output: _build/book.pdf
   toc:
     - file: intro.md
+      title: Neural Networks
     - file: notebooks/00-intro/what-to-expect.md
+      title: What to expect?
     - file: notebooks/00-intro/0000-00-02-prereq-hw.md
+      title: Pre-requisite Review
     - file: notebooks/01-py-intro/Python_1.ipynb
       children:
         - file: notebooks/01-py-intro/Python_2.ipynb
     - file: notebooks/02-linear-models/LinearModels.ipynb
+      title: Linear Models
     - file: notebooks/02-linear-models/Perceptron3.ipynb
+      title: Perceptron
 
 #    - file: notebooks/02-linear-models/ContinuousOptimization.ipynb
 #    - file: notebooks/021-decision-theory/2008-bertsekas-prob-Ch9-P20.md
