@@ -157,17 +157,17 @@ Usage:  interact [OPTIONS]
 ```
 
 We are going to use the `--nodes`, `--ntasks-per-node`, `--gpu` and `--time`
-options. Let us request 1 node, 4 CPU-cores per node, 4GB of memory, 1 gpu for 8 hrs.
+options. Let us request 1 node, 4 CPU-cores per node, 4GB of memory, for 8 hrs.
 
 ```shell
-[vdhiman@bridges2-login011 ~]$ interact --nodes 1 --ntasks-per-node=4 --mem=4000 --gpu --time 8:00:00
+[vdhiman@bridges2-login011 ~]$ interact --nodes 1 --ntasks-per-node=4 --mem=4000 --time 8:00:00
 
 A command prompt will appear when your session begins
 "Ctrl+d" or "exit" will end your session
 
---mem=4000 --nodes=1 --ntasks-per-node=4 --partition=GPU-small,GPU-shared --gpus=v100:1 --time=8:00:00
+--mem=4000 --nodes=1 --ntasks-per-node=4 --time=8:00:00
 
-salloc -J Interact --mem=4000 --nodes=1 --ntasks-per-node=4 --partition=GPU-small,GPU-shared --gpus=v100:1 --time=8:00:00
+salloc -J Interact --mem=4000 --nodes=1 --ntasks-per-node=4 --time=8:00:00
 salloc: Pending job allocation 34570270
 salloc: job 34570270 queued and waiting for resources
 salloc: job 34570270 has been allocated resources
@@ -185,36 +185,6 @@ full name by the `hostname` command.
 v001.ib.bridges2.psc.edu
 [vdhiman@v001 ~]$
 ```
-
-What kind of GPU do we have? We can check the GPU details using `nvidia-smi` command.
-
-```shell
-[vdhiman@v001 ~]$ nvidia-smi
-Wed Sep  3 17:55:34 2025
-+-----------------------------------------------------------------------------------------+
-| NVIDIA-SMI 560.35.03              Driver Version: 560.35.03      CUDA Version: 12.6     |
-|-----------------------------------------+------------------------+----------------------+
-| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
-|                                         |                        |               MIG M. |
-|=========================================+========================+======================|
-|   0  Tesla V100-SXM2-32GB           On  |   00000000:B2:00.0 Off |                    0 |
-| N/A   28C    P0             39W /  300W |       1MiB /  32768MiB |      0%      Default |
-|                                         |                        |                  N/A |
-+-----------------------------------------+------------------------+----------------------+
-
-+-----------------------------------------------------------------------------------------+
-| Processes:                                                                              |
-|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
-|        ID   ID                                                               Usage      |
-|=========================================================================================|
-|  No running processes found                                                             |
-+-----------------------------------------------------------------------------------------+
-[vdhiman@v001 ~]$
-```
-
-We have a node with Nvidia's TESLA V100-SXM2-32GB allocated to us. 
-
 
 ## 2. Finding a Jupyter installation
 
@@ -389,7 +359,7 @@ If you ran `ssh -L 7777:www.tcpipguide.com:80 vdhiman@bridges2.psc.edu` in a ter
 :::{tip} Answer
 :class: dropdown
 
-You will see www.tcpipguide.com.
+You will see www.tcpipguide.com .
 
 Because traffic from www.tcpipguide.com is being tunnelled through
 bridges2.psc.edu to your laptop.
