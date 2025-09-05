@@ -160,14 +160,14 @@ We are going to use the `--nodes`, `--ntasks-per-node`, `--gpu` and `--time`
 options. Let us request 1 node, 4 CPU-cores per node, 4GB of memory, for 8 hrs.
 
 ```shell
-[vdhiman@bridges2-login011 ~]$ interact --nodes 1 --ntasks-per-node=4 --mem=4000 --time 8:00:00
+[vdhiman@bridges2-login011 ~]$ interact --nodes 1 --ntasks-per-node=4 --mem=4000 --time 1:00:00 -gpu
 
 A command prompt will appear when your session begins
 "Ctrl+d" or "exit" will end your session
 
---mem=4000 --nodes=1 --ntasks-per-node=4 --time=8:00:00
+--mem=4000 --nodes=1 --ntasks-per-node=4 --time=1:00:00 -gpu
 
-salloc -J Interact --mem=4000 --nodes=1 --ntasks-per-node=4 --time=8:00:00
+salloc -J Interact --mem=4000 --nodes=1 --ntasks-per-node=4 --time=1:00:00
 salloc: Pending job allocation 34570270
 salloc: job 34570270 queued and waiting for resources
 salloc: job 34570270 has been allocated resources
