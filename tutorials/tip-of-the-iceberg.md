@@ -72,7 +72,8 @@ singularity shell /ocean/containers/ngc/pytorch/pytorch_24.08-py3.sif
 
 ```bash
 export HF_HOME=/ocean/projects/cis250148p/vdhiman/.cache/huggingface/
-pip install huggingface_hub transformers
+pip install git+https://github.com/huggingface/transformers@v4.49.0-Gemma-3
+pip install huggingface_hub
 ```
 
 ## Create a Python file
