@@ -43,9 +43,24 @@ test the model.
 :::
 
 
+![](tip_of_the_iceberg_assets/teachable-machine.png)
+
+## Instructions
+
+1. Click on "Class 1", change it to a class label that you want (e.g "Smiling").
+2. Click webcam. To capture some class 1 images.
+3. Repeat for other classes. Make sure you have approximately the same number
+   of images for all the classes.
+4. Click train. Congratulations, you have trained your first neural network!!!
+5. Click on preview.
+6. Click on "Export", choose to download the model in Tensorflow.js format.
+   You should get a zip file.
+7. Extract the zip file. Open `model.json` in a browser. What do you see?
+
 # Gemma 3 on Huggingface
 
-Create an account on [Hugging face](https://huggingface.co/google/gemma-3-12b-it) and try it.
+Create an account on [Hugging
+face](https://huggingface.co/google/gemma-3-12b-it) and try it.
 
 # Gemma 3 through Hugging face
 
@@ -55,13 +70,16 @@ Let's try to run a model on `bridges2.psc.edu`.
 
 ## Login
 
+Replace `<your PSC username>` with your PSC username.
 ```bash
-ssh vdhiman@bridges2.psc.edu
+export USER=<your PSC username>
+ssh $USER@bridges2.psc.edu
 ```
 ## Get node allocation
 
 ```bash
-interact --nodes 1 --ntasks-per-node=4 --mem=22000 --time 2:00:00 -gpu
+export USER=<your PSC username>
+interact --nodes 1 --ntasks-per-node=4 --mem=22000 --time 1:30:00 -gpu
 ```
 
 ## Load PyTorch singularity image
@@ -71,41 +89,109 @@ singularity shell /ocean/containers/ngc/pytorch/pytorch_24.08-py3.sif
 ```
 
 ```bash
-export HF_HOME=/ocean/projects/cis250148p/vdhiman/.cache/huggingface/
+export USER=<your PSC username>
+export HF_HOME=/ocean/projects/cis250148p/$USER/.cache/huggingface/
+mkdir -p $HF_HOME
+cp -r /ocean/projects/cis250148p/vdhiman/.cache/huggingface/  /ocean/projects/cis250148p/$USER/.cache/huggingface/
 pip install git+https://github.com/huggingface/transformers@v4.49.0-Gemma-3
 pip install huggingface_hub
+pip install 'accelerate>=0.26.0
 ```
 
 ## Create a Python file
 
 :::{code} python
-filename: gemma3.py
+:filename: hf_gemma3.py
 import torch
-from transformers import pipeline
+from transformers import AutoProcessor, Gemma3ForConditionalGeneration
 
-pipe = pipeline(
-    "image-text-to-text",
-    model="google/gemma-3-12b-it", # "google/gemma-3-12b-it", "google/gemma-3-27b-it" 
-    device="cuda",
-    torch_dtype=torch.bfloat16
+ckpt = "google/gemma-3-4b-it"
+model = Gemma3ForConditionalGeneration.from_pretrained(
+    ckpt, device_map="cuda", torch_dtype=torch.bfloat16,
 )
+processor = AutoProcessor.from_pretrained(ckpt)
 
 messages = [
     {
         "role": "user",
         "content": [
-            {"type": "image", "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"},
-            {"type": "text", "text": "What animal is on the candy?"}
+            {"type": "image", "url": "https://huggingface.co/spaces/big-vision/paligemma-hf/resolve/main/examples/password.jpg"},
+            # {"type": "image", "url": "https://a57.foxnews.com/static.foxnews.com/foxnews.com/content/uploads/2025/03/931/523/trump030625.jpg?ve=1&tl=1"},
+            # {"type": "image", "url": "https://vikasdhiman.info/images/headshot.jpg"}
+            {"type": "text", "text": "Who is this? What is the password?"}
         ]
     }
 ]
 
-output = pipe(text=messages, max_new_tokens=200)
-print(output[0]["generated_text"][-1]["content"])
+inputs = processor.apply_chat_template(
+    messages, add_generation_prompt=True, tokenize=True,
+    return_dict=True, return_tensors="pt"
+).to(model.device)
+
+print(torch.cuda.memory_summary())
+
+input_len = inputs["input_ids"].shape[-1]
+
+generation = model.generate(**inputs, max_new_tokens=100, do_sample=False)
+generation = generation[0][input_len:]
+
+decoded = processor.decode(generation, skip_special_tokens=True)
+print(decoded)
 :::
 
+## Run the python file
+
+```bash
+python3 hf_gemma3.py
+```
 
 
+# Min GPT
+
+https://github.com/karpathy/nanoGPT
+https://github.com/karpathy/minGPT
+
+## Clone the repository
+
+```bash
+git clone https://github.com/karpathy/minGPT
+cd minGPT
+```
+
+##  Create a virtual environment
+Create a virtual environment so as to not pollute global installs.
+
+```bash
+python -m venv minGPTvenv
+```
+## Activate the virtual environment
+On windows:
+
+```PowerShell
+minGPTvenv\Scripts\Activate.ps1
+```
+On Linux or Mac
+
+```bash
+source minGPTvenv/bin/activate
+```
+## Install the dependencies
+
+```bash
+pip install -e .
+```
+## Train chargpt
+
+1. Download [Tiny Shakespeare](https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt)
+2. Put it in the current directory (`minGPT`).
+3. Open `projects/chargpt/chargpt.py`. Find the word `gpt-mini`, change it to `gpt-nano`.
+3. Run `python projects/chargpt/chargpt.py`
+4. Observe the language generated changing from gibberish to something more
+   "Shakespeare like."
+
+# One of the simplest neural network model: Multi Layer perceptron
+
+[MLP%20Using%20Pytorch.ipynb](https://colab.research.google.com/github/wecacuee/ECE490-Neural-Networks/blob/master/notebooks/06-pytorch/MLP%20Using%20Pytorch.ipynb)
 
 # References
 
@@ -127,8 +213,10 @@ https://github.com/google/gemma_pytorch?tab=readme-ov-file
 
 https://ai.google.dev/gemma/docs/core/pytorch_gemma
 
+<!--
 # Additional notes
 
+https://colab.research.google.com/github/google/generative-ai-docs/blob/main/site/en/gemma/docs/core/pytorch_gemma.ipynb
 Cant run https://colab.research.google.com/drive/1he3iSSaNzqI7kj8rCO2wfaNZYm0IT8PB?usp=sharing
 because of a silly enumeration mismatch?
 
@@ -139,12 +227,6 @@ containter  /ocean/containers/ngc/pytorch/pytorch_24.08-py3.sif
 Inference time
 1.7 * Params * Param size
 
-Nano GPT
+-->
 
-https://github.com/karpathy/nanoGPT
-
-MLP
-
-https://colab.research.google.com/github/wecacuee/ECE490-Neural-Networks/blob/master/notebooks/06-pytorch/MLP%20Using%20Pytorch.ipynb#scrollTo=2958611b
-
-Gemma 3 through pytorch is getting killed
+<!-- Gemma 3 through pytorch is getting killed -->
