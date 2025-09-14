@@ -89,10 +89,6 @@ singularity shell /ocean/containers/ngc/pytorch/pytorch_24.08-py3.sif
 ```
 
 ```bash
-export USER=<your PSC username>
-export HF_HOME=/ocean/projects/cis250148p/$USER/.cache/huggingface/
-mkdir -p $HF_HOME
-cp -r /ocean/projects/cis250148p/vdhiman/.cache/huggingface/  /ocean/projects/cis250148p/$USER/.cache/huggingface/
 pip install git+https://github.com/huggingface/transformers@v4.49.0-Gemma-3
 pip install huggingface_hub
 pip install 'accelerate>=0.26.0
@@ -102,19 +98,37 @@ pip install 'accelerate>=0.26.0
 
 :::{code} python
 :filename: hf_gemma3.py
+# Sourced from here: https://github.com/huggingface/blog/blob/main/gemma3.md
 import torch
 from transformers import AutoProcessor, Gemma3ForConditionalGeneration
 
-ckpt = "google/gemma-3-4b-it"
+# Model name to download. We are not going to use this
+#ckpt = "google/gemma-3-4b-it"
+
+# We will instead use pre-downloaded weights from 
+#   vdhiman/.cache/huggingface
+# DO NOT change vdhiman here
+# ckpt_location directory should contain the file config.json
+ckpt_location = "/ocean/projects/cis250148p/vdhiman/.cache/huggingface/hub/models--google--gemma-3-4b-it/snapshots/093f9f388b31de276ce2de164bdc2081324b9767/" #config.json
+
+# processor_ckpt_location should contain the file processor_config.json
+processor_ckpt_location = "/ocean/projects/cis250148p/vdhiman/.cache/huggingface/hub/models--google--gemma-3-4b-it/snapshots/093f9f388b31de276ce2de164bdc2081324b9767/" #processor_config.json"
+
 model = Gemma3ForConditionalGeneration.from_pretrained(
-    ckpt, device_map="cuda", torch_dtype=torch.bfloat16,
+    ckpt_location, device_map="cuda", torch_dtype=torch.bfloat16,
+    local_files_only=True
 )
-processor = AutoProcessor.from_pretrained(ckpt)
+processor = AutoProcessor.from_pretrained(
+    processor_ckpt_location,
+    image_processor_filename="processor_config.json",
+    local_files_only=True)
 
 messages = [
     {
         "role": "user",
         "content": [
+            # you can replace your image sources or provide a 
+            # string of chats as "text"
             {"type": "image", "url": "https://huggingface.co/spaces/big-vision/paligemma-hf/resolve/main/examples/password.jpg"},
             # {"type": "image", "url": "https://a57.foxnews.com/static.foxnews.com/foxnews.com/content/uploads/2025/03/931/523/trump030625.jpg?ve=1&tl=1"},
             # {"type": "image", "url": "https://vikasdhiman.info/images/headshot.jpg"}
