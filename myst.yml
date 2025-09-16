@@ -28,9 +28,20 @@ project:
       children:
         - file: notebooks/01-py-intro/Python_2.ipynb
     - file: tutorials/tip-of-the-iceberg.md
-    - file: notebooks/02-linear-models/LinearModels.ipynb
+    - file: notebooks/02-linear-models/00-LinearModels.ipynb
       title: Linear Models
-    - file: notebooks/02-linear-models/Perceptron3.ipynb
+      children:
+        - file: notebooks/02-linear-models/01-Python_3.ipynb
+        - file: notebooks/02-linear-models/02-PlaneFitProblem.ipynb
+    - file: notebooks/02-linear-models/10-ContinuousOptimization.ipynb
+      title: Continuous Optimization
+      children:
+        - file: notebooks/02-linear-models/20-Hessians.ipynb
+          title: Hessians
+          children:
+            - file: notebooks/02-linear-models/30-VisEigenVectors.ipynb
+              title: Visualize Eigen Vectors
+    - file: notebooks/02-linear-models/40-Perceptron3.ipynb
       title: Perceptron
 
 #    - file: notebooks/02-linear-models/ContinuousOptimization.ipynb
